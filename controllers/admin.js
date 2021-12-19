@@ -66,7 +66,7 @@ exports.postAddProduct = (req, res, next) => {
     .save()
     .then((result) => {
       // console.log(result);
-      console.log('Created Product');
+      // console.log('Created Product');
       res.redirect('/admin/products');
     })
     .catch((err) => {
@@ -92,10 +92,11 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getEditProduct = (req, res, next) => {
-  const editMode = req.query.edit;
+  const editMode = !!req.query.edit;
   if (!editMode) {
     return res.redirect('/');
   }
+
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then((product) => {
@@ -120,9 +121,9 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const { prodId, updatedTitle, updatedPrice, updatedDesc } = req.body;
+  const { productId, title, price, description } = req.body;
   const image = req.file;
-
+  console.log(req.body);
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -132,28 +133,29 @@ exports.postEditProduct = (req, res, next) => {
       editing: true,
       hasError: true,
       product: {
-        title: updatedTitle,
-        price: updatedPrice,
-        description: updatedDesc,
-        _id: prodId,
+        title,
+        price,
+        description,
+        _id: productId,
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
     });
   }
 
-  Product.findById(prodId)
+  Product.findById(productId)
     .then((product) => {
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect('/');
       }
-      product.title = updatedTitle;
-      product.price = updatedPrice;
-      product.description = updatedDesc;
+      product.title = title;
+      product.price = price;
+      product.description = description;
       if (image) {
         fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
+      console.log('PRODUCT:', product);
       return product.save().then((result) => {
         console.log('UPDATED PRODUCT!');
         res.redirect('/admin/products');
@@ -171,7 +173,7 @@ exports.getProducts = (req, res, next) => {
     // .select('title price -_id')
     // .populate('userId', 'name')
     .then((products) => {
-      console.log(products);
+      // console.log(products);
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',

@@ -34,6 +34,7 @@ router.post(
     body('description').isLength({ min: 5, max: 400 }).trim(),
   ],
   isAuth,
+
   adminController.postEditProduct
 );
 

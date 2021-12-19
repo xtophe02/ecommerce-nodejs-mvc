@@ -29,8 +29,6 @@ used mongo pagination to load the products into chucks
 
 - docker
   to run 2x processes at sime time, nodejs and mongo
-- bootstrap
-  css files
 - nodejs
   the backend server
 - mongodb
