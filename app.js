@@ -117,5 +117,7 @@ app.use((error, req, res, next) => {
 //INIT MONGODB AND APP LISTENS
 mongoose
   .connect(process.env.MONGODB_URI, { useNewUrlParser: true })
-  .then(() => app.listen(process.env.PORT))
+  .then(() =>
+    app.listen(`listen on port ${process.env.PORT}`, process.env.PORT)
+  )
   .catch((err) => console.log(err));
